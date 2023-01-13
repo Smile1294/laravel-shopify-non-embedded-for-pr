@@ -307,8 +307,11 @@ class ShopifyAppProvider extends ServiceProvider
         $this->app['router']->aliasMiddleware('auth.proxy', AuthProxy::class);
         $this->app['router']->aliasMiddleware('auth.webhook', AuthWebhook::class);
         $this->app['router']->aliasMiddleware('billable', Billable::class);
-        $this->app['router']->aliasMiddleware('verify.shopify', VerifyShopify::class);
-
+        if(Util::getShopifyConfig('appbridge_enabled')) {
+            $this->app['router']->aliasMiddleware('verify.shopify', VerifyShopifyEmbedded::class);
+        }else{
+            $this->app['router']->aliasMiddleware('verify.shopify', VerifyShopifyExternal::class);
+        }
         $this->app['router']->pushMiddlewareToGroup('web', IframeProtection::class);
     }
 
